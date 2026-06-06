@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALFA 1.2 Robotics — Robótica de Última Milla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue-900: #0a1628;
+  --blue-800: #0d1f3c;
+  --blue-700: #112d54;
+  --blue-600: #1a3d6e;
+  --blue-500: #1e5799;
+  --blue-400: #2371c8;
+  --blue-300: #4b90e2;
+  --blue-200: #8bb9f0;
+  --blue-100: #d4e8fc;
+  --green-500: #10b981;
+  --green-400: #34d399;
+  --green-300: #6ee7b7;
+  --green-glow: rgba(16,185,129,0.15);
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-500: #64748b;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --accent-cyan: #06b6d4;
+  --accent-amber: #f59e0b;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.12);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.18);
+  --shadow-blue: 0 8px 32px rgba(35,113,200,0.25);
+  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--gray-800);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-100); }
+::-webkit-scrollbar-thumb { background: var(--blue-400); border-radius: 3px; }
+
+/* ─── UTILITIES ─── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.container-wide { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 99px; font-size: 0.72rem;
+  font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.badge-blue { background: rgba(35,113,200,0.1); color: var(--blue-400); border: 1px solid rgba(35,113,200,0.2); }
+.badge-green { background: var(--green-glow); color: var(--green-400); border: 1px solid rgba(16,185,129,0.25); }
+.badge-amber { background: rgba(245,158,11,0.1); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.2); }
+.badge-cyan { background: rgba(6,182,212,0.1); color: var(--accent-cyan); border: 1px solid rgba(6,182,212,0.2); }
+
+.section-label {
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue-400);
+  display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+}
+.section-label::before {
+  content: ''; display: block; width: 32px; height: 1px; background: var(--blue-400);
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.15; }
+h1 { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 800; }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; }
+h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); font-weight: 700; }
+h4 { font-size: 1.05rem; font-weight: 600; }
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--blue-300) 0%, var(--accent-cyan) 50%, var(--green-400) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.text-blue { color: var(--blue-400); }
+
+section { padding: 100px 0; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; border-radius: var(--radius-sm); font-family: var(--font-body);
+  font-size: 0.92rem; font-weight: 600; cursor: pointer; border: none;
+  text-decoration: none; transition: var(--transition);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--blue-500), var(--blue-400));
+  color: var(--white); box-shadow: var(--shadow-blue);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(35,113,200,0.4); }
+.btn-outline {
+  background: transparent; color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+.btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.6); }
+.btn-outline-dark {
+  background: transparent; color: var(--blue-400);
+  border: 1.5px solid rgba(35,113,200,0.4);
+}
+.btn-outline-dark:hover { background: rgba(35,113,200,0.05); border-color: var(--blue-400); }
+
+/* ─── NAVBAR ─── */
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 32px; height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: var(--transition);
+}
+#navbar.scrolled {
+  background: rgba(10,22,40,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.nav-logo { height: 38px; width: auto; }
+.nav-brand-text { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: var(--white); letter-spacing: 0.03em; }
+.nav-brand-sub { font-size: 0.65rem; font-family: var(--font-mono); color: var(--blue-300); letter-spacing: 0.1em; text-transform: uppercase; display: block; }
+
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links a {
+  color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.85rem;
+  font-weight: 500; padding: 8px 12px; border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+.nav-links a:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+
+.nav-hamburger {
+  display: none; flex-direction: column; gap: 5px; cursor: pointer;
+  padding: 8px; background: none; border: none;
+}
+.nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+.nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+.nav-mobile {
+  display: none; position: fixed; top: 70px; left: 0; right: 0; z-index: 999;
+  background: rgba(10,22,40,0.97); backdrop-filter: blur(20px);
+  padding: 20px 24px 28px; border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-direction: column; gap: 2px;
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.95rem; font-weight: 500; padding: 12px 16px; border-radius: var(--radius-sm); transition: var(--transition); }
+.nav-mobile a:hover { color: var(--white); background: rgba(255,255,255,0.07); }
+
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh; display: flex; align-items: center;
+  position: relative; overflow: hidden;
+  background: var(--blue-900);
+  padding-top: 70px;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse at 30% 60%, rgba(35,113,200,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse at 75% 20%, rgba(6,182,212,0.1) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 80%, rgba(16,185,129,0.08) 0%, transparent 40%);
+}
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0; opacity: 0.04;
+  background-image: linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-inner {
+  position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center; width: 100%; padding: 80px 0 60px;
+}
+.hero-content { padding-right: 20px; }
+.hero-badge { margin-bottom: 28px; }
+.hero-title { color: var(--white); margin-bottom: 24px; }
+.hero-subtitle { font-size: 1.1rem; color: rgba(255,255,255,0.62); font-weight: 300; margin-bottom: 40px; max-width: 500px; }
+.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 56px; }
+
+.hero-metrics {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+}
+.hero-metric {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-md); padding: 14px 18px;
+  transition: var(--transition);
+}
+.hero-metric:hover { background: rgba(255,255,255,0.07); border-color: rgba(35,113,200,0.3); }
+.hero-metric-val { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--white); line-height: 1; margin-bottom: 4px; }
+.hero-metric-key { font-size: 0.72rem; font-family: var(--font-mono); color: rgba(255,255,255,0.45); letter-spacing: 0.06em; text-transform: uppercase; }
+
+.hero-image-wrap { position: relative; }
+.hero-image-wrap::before {
+  content: ''; position: absolute; inset: -20px; border-radius: var(--radius-xl);
+  background: radial-gradient(ellipse at center, rgba(35,113,200,0.2), transparent 70%);
+  z-index: 0;
+}
+.hero-image-wrap img { width: 100%; border-radius: var(--radius-lg); position: relative; z-index: 1; filter: drop-shadow(0 20px 60px rgba(0,0,0,0.5)); }
+
+/* ─── PROBLEMA ─── */
+#problema { background: var(--gray-50); }
+.problema-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.problema-content h2 { margin-bottom: 24px; }
+.problema-content p { color: var(--gray-600, #475569); margin-bottom: 16px; font-size: 1rem; }
+.problema-items { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 32px; }
+.problema-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+  padding: 14px 16px; transition: var(--transition);
+}
+.problema-item:hover { border-color: rgba(35,113,200,0.25); box-shadow: var(--shadow-sm); }
+.problema-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+.problema-item-text { font-size: 0.85rem; font-weight: 500; color: var(--gray-700); }
+.problema-visual { position: relative; }
+.problema-stat-cards { display: flex; flex-direction: column; gap: 14px; }
+.stat-card {
+  background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+  padding: 24px 28px; transition: var(--transition);
+}
+.stat-card:hover { box-shadow: var(--shadow-md); border-color: rgba(35,113,200,0.2); }
+.stat-num { font-family: var(--font-display); font-size: 2.8rem; font-weight: 800; color: var(--blue-500); line-height: 1; }
+.stat-desc { font-size: 0.88rem; color: var(--gray-500); margin-top: 6px; }
+.stat-card.accent { background: linear-gradient(135deg, var(--blue-800), var(--blue-700)); border-color: transparent; }
+.stat-card.accent .stat-num { color: var(--white); }
+.stat-card.accent .stat-desc { color: rgba(255,255,255,0.65); }
+
+/* ─── SOLUCIÓN ─── */
+#solucion { background: var(--blue-900); color: var(--white); }
+.solucion-inner { text-align: center; max-width: 820px; margin: 0 auto 64px; }
+.solucion-inner h2 { color: var(--white); margin-bottom: 20px; }
+.solucion-inner p { color: rgba(255,255,255,0.65); font-size: 1.05rem; }
+.solucion-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.solucion-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg); padding: 32px 28px; transition: var(--transition);
+  position: relative; overflow: hidden;
+}
+.solucion-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--blue-400), var(--accent-cyan));
+  opacity: 0; transition: var(--transition);
+}
+.solucion-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-4px); }
+.solucion-card:hover::before { opacity: 1; }
+.solucion-card-icon { font-size: 2rem; margin-bottom: 16px; }
+.solucion-card h4 { color: var(--white); margin-bottom: 10px; }
+.solucion-card p { font-size: 0.88rem; color: rgba(255,255,255,0.55); }
+
+/* ─── ROBOTS ─── */
+#robots { background: var(--white); }
+.robots-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 60px; }
+.robot-card {
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--gray-200); transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.robot-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-6px); }
+.robot-card-img { width: 100%; height: 280px; object-fit: cover; display: block; }
+.robot-card-body { padding: 28px 32px; }
+.robot-card-type { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+.robot-card-type.personal { color: var(--blue-400); }
+.robot-card-type.empresarial { color: var(--accent-cyan); }
+.robot-card h3 { margin-bottom: 12px; }
+.robot-card p { color: var(--gray-500); font-size: 0.9rem; margin-bottom: 20px; }
+.robot-specs { display: flex; flex-direction: column; gap: 8px; }
+.robot-spec { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--gray-50); border-radius: var(--radius-sm); }
+.robot-spec-key { font-size: 0.78rem; color: var(--gray-500); font-weight: 500; }
+.robot-spec-val { font-size: 0.82rem; font-weight: 600; color: var(--gray-800); font-family: var(--font-mono); }
+
+
+.model-renders-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 32px 0;
+}
+.model-render-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+}
+.model-render-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  display: block;
+  background: var(--white);
+  padding: 8px;
+}
+.model-render-card div {
+  padding: 10px 12px;
+  background: var(--gray-50);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+/* Tabla comparativa */
+.compare-section { margin-top: 40px; }
+.compare-section h3 { margin-bottom: 24px; text-align: center; }
+.compare-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.compare-table th, .compare-table td { padding: 12px 20px; text-align: left; border-bottom: 1px solid var(--gray-200); }
+.compare-table thead th { background: var(--gray-900); color: var(--white); font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; }
+.compare-table thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+.compare-table thead th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+.compare-table tbody tr:hover { background: var(--gray-50); }
+.compare-table tbody tr:nth-child(even) { background: var(--gray-50); }
+.compare-table tbody tr:nth-child(even):hover { background: var(--gray-100); }
+.compare-table td:first-child { font-weight: 600; color: var(--gray-700); }
+.compare-table td.col-personal { color: var(--blue-500); font-weight: 500; }
+.compare-table td.col-empresarial { color: #0891b2; font-weight: 500; }
+
+/* ─── TECNOLOGÍA ─── */
+#tecnologia { background: var(--gray-900); color: var(--white); }
+.tech-header { text-align: center; margin-bottom: 60px; }
+.tech-header h2 { color: var(--white); margin-bottom: 16px; }
+.tech-header p { color: rgba(255,255,255,0.55); max-width: 680px; margin: 0 auto; }
+.tech-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 56px; }
+.tech-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius-md); padding: 18px 16px; transition: var(--transition);
+}
+.tech-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(35,113,200,0.3); transform: translateY(-3px); }
+.tech-card-icon { font-size: 1.5rem; margin-bottom: 10px; }
+.tech-card h4 { color: var(--white); font-size: 0.88rem; margin-bottom: 6px; }
+.tech-card p { font-size: 0.78rem; color: rgba(255,255,255,0.45); line-height: 1.5; }
+.tech-images { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.tech-img-wrap { position: relative; border-radius: var(--radius-lg); overflow: hidden; }
+.tech-img-wrap img { width: 100%; height: 320px; object-fit: cover; display: block; }
+.tech-img-caption {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 24px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: var(--white);
+}
+.tech-img-caption h4 { font-size: 1rem; margin-bottom: 4px; }
+.tech-img-caption p { font-size: 0.78rem; color: rgba(255,255,255,0.65); }
+
+/* ─── IMPACTO ─── */
+#impacto { background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%); }
+.impacto-header { text-align: center; margin-bottom: 56px; }
+.impacto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.impacto-card {
+  border-radius: var(--radius-lg); padding: 36px 32px; border: 1px solid transparent;
+  transition: var(--transition); position: relative; overflow: hidden;
+}
+.impacto-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  opacity: 0; transition: var(--transition);
+}
+.impacto-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.impacto-card:hover::after { opacity: 1; }
+.impacto-card.social { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: #bfdbfe; }
+.impacto-card.social::after { background: linear-gradient(90deg, var(--blue-500), var(--blue-300)); }
+.impacto-card.urbano { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #bbf7d0; }
+.impacto-card.urbano::after { background: linear-gradient(90deg, var(--green-500), var(--green-300)); }
+.impacto-card.logistico { background: linear-gradient(135deg, #ecfeff, #cffafe); border-color: #a5f3fc; }
+.impacto-card.logistico::after { background: linear-gradient(90deg, var(--accent-cyan), #67e8f9); }
+.impacto-icon { font-size: 2.5rem; margin-bottom: 18px; }
+.impacto-card h3 { margin-bottom: 16px; font-size: 1.2rem; }
+.impacto-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.impacto-list li { font-size: 0.88rem; color: var(--gray-600, #475569); display: flex; align-items: center; gap: 8px; }
+.impacto-list li::before { content: '→'; color: var(--blue-400); font-weight: 700; flex-shrink: 0; }
+
+/* ─── GESTIÓN ─── */
+#gestion { background: var(--blue-900); color: var(--white); }
+.gestion-header { text-align: center; margin-bottom: 56px; }
+.gestion-header h2 { color: var(--white); margin-bottom: 16px; }
+.gestion-header p { color: rgba(255,255,255,0.55); max-width: 680px; margin: 0 auto; }
+.gestion-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 48px; }
+.gestion-pill {
+  padding: 7px 16px; border-radius: 99px; font-size: 0.78rem; font-weight: 500;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.75);
+  transition: var(--transition);
+}
+.gestion-pill:hover { background: rgba(35,113,200,0.2); border-color: rgba(35,113,200,0.4); color: var(--white); }
+
+/* Gallery tabs */
+.gallery-tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.gallery-tab {
+  padding: 8px 18px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6); transition: var(--transition);
+}
+.gallery-tab.active { background: var(--blue-500); border-color: var(--blue-500); color: var(--white); }
+.gallery-panel { display: none; }
+.gallery-panel.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.gallery-img-card {
+  position: relative; border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.08); transition: var(--transition);
+}
+.gallery-img-card:hover { border-color: rgba(35,113,200,0.4); transform: scale(1.02); }
+.gallery-img-card img { 
+  width: 100%; 
+  height: 200px; 
+  object-fit: contain; 
+  display: block; 
+  background: var(--white); 
+  padding: 8px; 
+}
+.gallery-img-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  padding: 16px 12px 10px; color: var(--white); font-size: 0.75rem; font-weight: 600;
+}
+.gallery-img-label span { display: block; font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ─── CASOS PILOTO ─── */
+#casos { background: var(--white); }
+.casos-notice {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2);
+  border-radius: var(--radius-sm); padding: 10px 18px; margin-bottom: 48px;
+  font-size: 0.8rem; color: var(--accent-amber); font-weight: 500;
+}
+.casos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.caso-card {
+  border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--gray-200);
+  transition: var(--transition); box-shadow: var(--shadow-sm);
+}
+.caso-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-6px); }
+.caso-card-img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.caso-card-body { padding: 24px 26px; }
+.caso-tag { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+.caso-card h3 { font-size: 1.15rem; margin-bottom: 10px; }
+.caso-card p { font-size: 0.87rem; color: var(--gray-500); }
+
+/* ─── TESTIMONIOS ─── */
+#testimonios { background: var(--gray-50); }
+.testimonios-header { text-align: center; margin-bottom: 56px; }
+.testimonios-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.testimonio-card {
+  background: var(--white); border-radius: var(--radius-lg); padding: 32px 30px;
+  border: 1px solid var(--gray-200); transition: var(--transition);
+  position: relative;
+}
+.testimonio-card::before {
+  content: '"'; position: absolute; top: 20px; right: 24px;
+  font-size: 5rem; font-family: var(--font-display); color: var(--gray-100);
+  line-height: 1; font-weight: 800;
+}
+.testimonio-card:hover { box-shadow: var(--shadow-md); border-color: rgba(35,113,200,0.15); }
+.testimonio-text { font-size: 0.95rem; color: var(--gray-600, #475569); line-height: 1.75; margin-bottom: 24px; font-style: italic; position: relative; z-index: 1; }
+.testimonio-author { display: flex; align-items: center; gap: 14px; }
+.testimonio-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue-500), var(--accent-cyan));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 0.9rem; color: var(--white); flex-shrink: 0;
+}
+.testimonio-name { font-weight: 700; font-size: 0.9rem; color: var(--gray-800); }
+.testimonio-role { font-size: 0.78rem; color: var(--gray-500); }
+
+/* ─── EQUIPO ─── */
+#equipo { background: var(--white); }
+.equipo-header { text-align: center; margin-bottom: 56px; }
+.equipo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 48px; }
+.equipo-card {
+  border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--gray-200);
+  transition: var(--transition); text-align: center;
+}
+.equipo-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
+.equipo-img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.equipo-card-body { padding: 20px 18px; }
+.equipo-card h4 { font-size: 0.95rem; margin-bottom: 6px; }
+.equipo-card-role { font-family: var(--font-mono); font-size: 0.68rem; color: var(--blue-400); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px; }
+.equipo-card p { font-size: 0.8rem; color: var(--gray-500); line-height: 1.5; }
+
+.equipo-org { margin-top: 40px; text-align: center; }
+.equipo-org h3 { margin-bottom: 20px; }
+.equipo-org img { max-width: 100%; border-radius: var(--radius-md); border: 1px solid var(--gray-200); }
+
+/* ─── ROADMAP ─── */
+#roadmap { background: var(--gray-900); color: var(--white); }
+.roadmap-header { text-align: center; margin-bottom: 60px; }
+.roadmap-header h2 { color: var(--white); margin-bottom: 16px; }
+.roadmap-header p { color: rgba(255,255,255,0.55); max-width: 580px; margin: 0 auto; }
+.roadmap-timeline { position: relative; }
+.roadmap-timeline::before {
+  content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, var(--blue-500), var(--accent-cyan), var(--green-500));
+  transform: translateX(-50%);
+}
+.roadmap-item {
+  display: grid; grid-template-columns: 1fr 40px 1fr; align-items: center; gap: 20px; margin-bottom: 32px;
+}
+.roadmap-item:nth-child(even) .roadmap-content { order: 3; text-align: left; }
+.roadmap-item:nth-child(even) .roadmap-empty { order: 1; }
+.roadmap-content {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-md); padding: 20px 24px; transition: var(--transition);
+}
+.roadmap-content:hover { background: rgba(255,255,255,0.08); border-color: rgba(35,113,200,0.3); }
+.roadmap-phase {
+  font-family: var(--font-mono); font-size: 0.65rem; color: var(--blue-300);
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;
+}
+.roadmap-content h4 { color: var(--white); font-size: 0.95rem; }
+.roadmap-dot {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--blue-500); border: 3px solid var(--blue-900);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
+  color: var(--white); position: relative; z-index: 1; flex-shrink: 0;
+  box-shadow: 0 0 0 6px rgba(35,113,200,0.15);
+}
+.roadmap-empty {}
+.roadmap-img-support { text-align: center; margin-top: 48px; }
+.roadmap-img-support img { max-width: 800px; width: 100%; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08); }
+
+/* ─── GALERÍA DOCUMENTAL ─── */
+#galeria { background: var(--gray-50); }
+.galeria-header { text-align: center; margin-bottom: 56px; }
+.galeria-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.galeria-item {
+  border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
+  border: 1px solid var(--gray-200); transition: var(--transition); position: relative;
+}
+.galeria-item:hover { box-shadow: var(--shadow-md); transform: scale(1.03); z-index: 2; }
+.galeria-item img { 
+  width: 100%; 
+  height: 150px; 
+  object-fit: contain; 
+  display: block; 
+  background: var(--white); 
+  padding: 8px; 
+}
+.galeria-item-label {
+  padding: 10px 12px; background: var(--white); font-size: 0.78rem;
+  font-weight: 600; color: var(--gray-700);
+}
+.galeria-item-label span { display: block; font-family: var(--font-mono); font-size: 0.65rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+/* ─── CONTACTO ─── */
+#contacto { background: var(--blue-900); color: var(--white); }
+.contacto-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.contacto-info h2 { color: var(--white); margin-bottom: 20px; }
+.contacto-info p { color: rgba(255,255,255,0.6); margin-bottom: 36px; }
+.contacto-details { display: flex; flex-direction: column; gap: 16px; }
+.contacto-detail { display: flex; align-items: flex-start; gap: 14px; }
+.contacto-detail-icon {
+  width: 40px; height: 40px; border-radius: var(--radius-sm); flex-shrink: 0;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+}
+.contacto-detail-text { font-size: 0.88rem; color: rgba(255,255,255,0.65); }
+.contacto-detail-text strong { display: block; color: var(--white); font-weight: 600; margin-bottom: 2px; }
+
+.contacto-form {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg); padding: 40px 36px;
+}
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.75); margin-bottom: 8px; }
+.form-control {
+  width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-sm);
+  color: var(--white); font-family: var(--font-body); font-size: 0.9rem;
+  transition: var(--transition); outline: none; resize: vertical;
+}
+.form-control:focus { border-color: var(--blue-400); background: rgba(255,255,255,0.1); }
+.form-control::placeholder { color: rgba(255,255,255,0.3); }
+.form-message {
+  display: none; padding: 14px 18px; border-radius: var(--radius-sm); margin-top: 16px;
+  font-size: 0.88rem; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25);
+  color: var(--green-400); font-weight: 500;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--gray-900); color: rgba(255,255,255,0.6); padding: 60px 0 36px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 40px; }
+.footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.footer-logo { height: 32px; width: auto; }
+.footer-brand-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: var(--white); }
+.footer-desc { font-size: 0.85rem; line-height: 1.7; margin-bottom: 18px; }
+.footer-disclaimer {
+  font-size: 0.78rem; padding: 12px 16px; border-radius: var(--radius-sm);
+  background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.15); color: rgba(245,158,11,0.8);
+}
+.footer-nav h5 { font-family: var(--font-display); color: var(--white); font-size: 0.85rem; margin-bottom: 16px; letter-spacing: 0.05em; text-transform: uppercase; }
+.footer-nav a { display: block; font-size: 0.83rem; color: rgba(255,255,255,0.5); text-decoration: none; margin-bottom: 10px; transition: var(--transition); }
+.footer-nav a:hover { color: var(--white); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+  gap: 8px; }
+.footer-bottom-text { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+
+/* ─── LIGHTBOX ─── */
+.lightbox {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+}
+.lightbox.open { display: flex; }
+.lightbox-img { max-width: 90vw; max-height: 88vh; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); }
+.lightbox-close {
+  position: absolute; top: 20px; right: 24px; width: 44px; height: 44px;
+  border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: var(--white); font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+/* ─── ANIMATIONS ─── */
+.fade-up {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+.fade-up.delay-1 { transition-delay: 0.1s; }
+.fade-up.delay-2 { transition-delay: 0.2s; }
+.fade-up.delay-3 { transition-delay: 0.3s; }
+.fade-up.delay-4 { transition-delay: 0.4s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1100px) {
+  .tech-grid { grid-template-columns: repeat(3, 1fr); }
+  .equipo-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .footer-inner > *:first-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 900px) {
+  .model-renders-grid { grid-template-columns: repeat(2, 1fr); }
+  section { padding: 72px 0; }
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-image-wrap { order: -1; }
+  .hero-image-wrap img { max-height: 340px; object-fit: cover; width: 100%; }
+  .hero-metrics { grid-template-columns: repeat(3, 1fr); }
+  .problema-grid { grid-template-columns: 1fr; gap: 40px; }
+  .solucion-cards { grid-template-columns: 1fr 1fr; }
+  .robots-grid { grid-template-columns: 1fr; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); }
+  .tech-images { grid-template-columns: 1fr; }
+  .impacto-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .casos-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .testimonios-grid { grid-template-columns: 1fr; }
+  .contacto-inner { grid-template-columns: 1fr; gap: 48px; }
+  .galeria-grid { grid-template-columns: repeat(3, 1fr); }
+  .roadmap-timeline::before { left: 20px; }
+  .roadmap-item { grid-template-columns: 40px 1fr; }
+  .roadmap-item:nth-child(even) .roadmap-content { order: unset; }
+  .roadmap-item:nth-child(even) .roadmap-empty { display: none; }
+  .roadmap-empty { display: none; }
+  .gallery-panel.active { grid-template-columns: repeat(2, 1fr); }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+}
+
+@media (max-width: 600px) {
+  .model-renders-grid { grid-template-columns: 1fr; }
+  .container { padding: 0 16px; }
+  .container-wide { padding: 0 16px; }
+  section { padding: 56px 0; }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+  .hero-metrics { grid-template-columns: repeat(2, 1fr); }
+  .solucion-cards { grid-template-columns: 1fr; }
+  .problema-items { grid-template-columns: 1fr; }
+  .tech-grid { grid-template-columns: 1fr 1fr; }
+  .equipo-grid { grid-template-columns: 1fr 1fr; }
+  .galeria-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-panel.active { grid-template-columns: 1fr; }
+  .compare-table { font-size: 0.78rem; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .footer-inner > *:first-child { grid-column: auto; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav id="navbar" role="navigation" aria-label="Navegación principal">
+  <a class="nav-brand" href="#hero">
+    <img src="imagenes_alfa12/mem_fig01_logo_alfa12_recortado_transparente.png" alt="Logo ALFA 1.2" class="nav-logo">
+    <div>
+      <span class="nav-brand-text">ALFA 1.2</span>
+      <span class="nav-brand-sub">Robotics · Barcelona</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#hero">Inicio</a>
+    <a href="#solucion">Solución</a>
+    <a href="#robots">Robots</a>
+    <a href="#tecnologia">Tecnología</a>
+    <a href="#gestion">Gestión</a>
+    <a href="#casos">Casos piloto</a>
+    <a href="#equipo">Equipo</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil">
+  <a href="#hero" onclick="closeMenu()">Inicio</a>
+  <a href="#solucion" onclick="closeMenu()">Solución</a>
+  <a href="#robots" onclick="closeMenu()">Robots</a>
+  <a href="#tecnologia" onclick="closeMenu()">Tecnología</a>
+  <a href="#gestion" onclick="closeMenu()">Gestión</a>
+  <a href="#casos" onclick="closeMenu()">Casos piloto</a>
+  <a href="#equipo" onclick="closeMenu()">Equipo</a>
+  <a href="#contacto" onclick="closeMenu()">Contacto</a>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge badge-green">● Proyecto académico de ingeniería</span>
+        </div>
+        <h1 class="hero-title">Robótica de última milla para ciudades más <span class="text-gradient">accesibles, seguras e inteligentes</span></h1>
+        <p class="hero-subtitle">Diseñamos soluciones robóticas para asistir el transporte de cargas, optimizar la logística urbana y reducir barreras físicas en la vida cotidiana.</p>
+        <div class="hero-cta">
+          <a href="#solucion" class="btn btn-primary">Conocer la solución →</a>
+          <a href="#robots" class="btn btn-outline">Ver modelos</a>
+        </div>
+        <div class="hero-metrics">
+          <div class="hero-metric">
+            <div class="hero-metric-val">2</div>
+            <div class="hero-metric-key">Modelos conceptuales</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val">20–40 kg</div>
+            <div class="hero-metric-key">Carga útil</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val" style="font-size:1rem;padding-top:4px;">↑ Elevable</div>
+            <div class="hero-metric-key">Bandeja elevable</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val" style="font-size:0.9rem;padding-top:4px;">Supervisada</div>
+            <div class="hero-metric-key">Navegación urbana</div>
+          </div>
+          <div class="hero-metric" style="grid-column: 1 / -1;">
+            <div class="hero-metric-val" style="font-size:0.82rem;color:rgba(255,255,255,0.45);">Proyecto conceptual de ingeniería &mdash; validación preliminar</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image-wrap">
+        <img src="imagenes_alfa12/web_hero_familia_robots_alfa12.png" alt="Familia de robots ALFA 1.2 — modelos personal asistencial y empresarial logístico">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROBLEMA ═══ -->
+<section id="problema">
+  <div class="container">
+    <div class="problema-grid">
+      <div class="problema-content fade-up">
+        <div class="section-label">El problema</div>
+        <h2>La última milla no termina en la <span class="text-blue">puerta del edificio</span></h2>
+        <p>Los sistemas de distribución logística han avanzado de forma significativa en la planificación de rutas y la optimización de entregas. Sin embargo, el tramo final —desde el punto de recepción hasta el espacio de uso— sigue siendo responsabilidad exclusiva del usuario.</p>
+        <p>Este segmento representa una barrera real para personas mayores, individuos con movilidad reducida o situaciones de carga intensa. El esfuerzo físico acumulado —bolsas pesadas, garrafas, cajas, productos de limpieza— incrementa el riesgo de caídas, lesiones musculares y pérdida progresiva de autonomía.</p>
+        <p>Los entornos urbanos complejos, con portales, escalones, rampas y ascensores estrechos, agravan estas dificultades y hacen necesaria una solución diseñada específicamente para este contexto.</p>
+        <div class="problema-items">
+          <div class="problema-item">
+            <div class="problema-icon">👴</div>
+            <div class="problema-item-text">Personas mayores con dificultades para cargar peso</div>
+          </div>
+          <div class="problema-item">
+            <div class="problema-icon">♿</div>
+            <div class="problema-item-text">Usuarios con movilidad reducida o limitaciones físicas</div>
+          </div>
+          <div class="problema-item">
+            <div class="problema-icon">🛒</div>
+            <div class="problema-item-text">Cargas domésticas: garrafas, bolsas, productos pesados</div>
+          </div>
+          <div class="problema-item">
+            <div class="problema-icon">⚠️</div>
+            <div class="problema-item-text">Riesgo de caídas al agacharse o manipular peso</div>
+          </div>
+          <div class="problema-item">
+            <div class="problema-icon">🏙️</div>
+            <div class="problema-item-text">Entornos urbanos con portales, escalones y rampas</div>
+          </div>
+          <div class="problema-item">
+            <div class="problema-icon">💪</div>
+            <div class="problema-item-text">Esfuerzo físico repetitivo y acumulativo</div>
+          </div>
+        </div>
+      </div>
+      <div class="problema-visual fade-up delay-2">
+        <div class="problema-stat-cards">
+          <div class="stat-card accent">
+            <div class="stat-num">Cargas</div>
+            <div class="stat-desc">Las compras domésticas, garrafas, productos de limpieza y paquetes voluminosos siguen generando esfuerzo físico en el tramo final de la entrega.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">Ergonomía</div>
+            <div class="stat-desc">Agacharse para introducir o retirar peso desde una posición baja puede provocar posturas forzadas, fatiga y riesgo de lesión musculoesquelética.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">Entorno</div>
+            <div class="stat-desc">Portales, aceras, rampas, ascensores, bordillos y obstáculos urbanos hacen que la última milla sea especialmente compleja para usuarios vulnerables.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">Autonomía</div>
+            <div class="stat-desc">Una solución robótica asistencial puede reducir la dependencia de terceros y mejorar la seguridad del usuario durante tareas cotidianas de abastecimiento.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOLUCIÓN ═══ -->
+<section id="solucion">
+  <div class="container">
+    <div class="solucion-inner fade-up">
+      <div class="section-label" style="justify-content:center;">La solución</div>
+      <h2>Una familia de robots con <span class="text-gradient">arquitectura común</span> y dos modelos diferenciados</h2>
+      <p>ALFA 1.2 propone el diseño conceptual de una familia de robots terrestres de última milla. No se trata de un robot único para todo, sino de dos modelos especializados que comparten tecnología de base y se adaptan a necesidades distintas: asistencia personal y logística urbana.</p>
+    </div>
+    <div class="solucion-cards">
+      <div class="solucion-card fade-up delay-1">
+        <div class="solucion-card-icon">🤝</div>
+        <h4>Diseño centrado en el usuario</h4>
+        <p>Interfaces sencillas, bandeja elevable y operación supervisada pensadas para que cualquier usuario pueda interactuar con seguridad, independientemente de su capacidad técnica.</p>
+      </div>
+      <div class="solucion-card fade-up delay-2">
+        <div class="solucion-card-icon">🔧</div>
+        <h4>Arquitectura técnica común</h4>
+        <p>Plataforma móvil de tracción por orugas, sistema de sensórica compartida y módulo de control unificado. La coherencia técnica entre modelos reduce costes de desarrollo y mantenimiento.</p>
+      </div>
+      <div class="solucion-card fade-up delay-3">
+        <div class="solucion-card-icon">♿</div>
+        <h4>Accesibilidad como requisito</h4>
+        <p>La bandeja elevable reduce el esfuerzo de agacharse. El perfil de operación supervisada garantiza seguridad en entornos con personas. La modularidad permite adaptaciones futuras.</p>
+      </div>
+      <div class="solucion-card fade-up delay-1">
+        <div class="solucion-card-icon">🌱</div>
+        <h4>Movilidad eléctrica sostenible</h4>
+        <p>Plataforma de propulsión eléctrica orientada a la reducción de emisiones en entornos urbanos. Compatible conceptualmente con políticas de movilidad sostenible municipal.</p>
+      </div>
+      <div class="solucion-card fade-up delay-2">
+        <div class="solucion-card-icon">🔒</div>
+        <h4>Seguridad operacional</h4>
+        <p>Sistema de parada de emergencia, limitación de velocidad, sensores de contacto y señalización luminosa. La seguridad no es opcional: es un requisito de diseño desde el origen.</p>
+      </div>
+      <div class="solucion-card fade-up delay-3">
+        <div class="solucion-card-icon">📦</div>
+        <h4>Modularidad y trazabilidad</h4>
+        <p>Compartimentos con identificación mediante PIN, QR o RFID. Control térmico conceptual para distintas tipologías de carga. Diseño modular pensado para escalabilidad.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ROBOTS ═══ -->
+<section id="robots">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:52px;" class="fade-up">
+      <div class="section-label" style="justify-content:center;">Modelos de robot</div>
+      <h2>Dos modelos, una misma familia</h2>
+      <p style="color:var(--gray-500);max-width:600px;margin:0 auto;margin-top:14px;">Cada modelo está diseñado para un contexto operativo específico, con especificaciones técnicas diferenciadas y perfil de usuario propio.</p>
+    </div>
+    <div class="robots-grid">
+      <!-- Modelo Personal -->
+      <div class="robot-card fade-up delay-1">
+        <img src="imagenes_alfa12/web_modelo_personal_asistencial.png" alt="Modelo Personal Asistencial ALFA 1.2" class="robot-card-img">
+        <div class="robot-card-body">
+          <div class="robot-card-type personal">● Modelo Personal Asistencial</div>
+          <h3>Acompañamiento en recorridos de proximidad</h3>
+          <p>Robot de acompañamiento personal para el transporte de cargas domésticas desde el punto de compra hasta el domicilio. Orientado a personas mayores o con movilidad reducida. Operación bajo supervisión directa del usuario.</p>
+          <div class="robot-specs">
+            <div class="robot-spec">
+              <span class="robot-spec-key">Dimensiones</span>
+              <span class="robot-spec-val">50 × 80 × 90 cm</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Carga útil</span>
+              <span class="robot-spec-val">20 – 30 kg</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Compartimentos</span>
+              <span class="robot-spec-val">1 compartimento</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Modo de operación</span>
+              <span class="robot-spec-val">Supervisión directa</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Entorno</span>
+              <span class="robot-spec-val">Residencial urbano</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Interfaz</span>
+              <span class="robot-spec-val">HMI sencilla</span>
+            </div>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="badge badge-blue">Bandeja elevable</span>
+            <span class="badge badge-green">Personas mayores</span>
+            <span class="badge badge-blue">Tracción orugas</span>
+          </div>
+        </div>
+      </div>
+      <!-- Modelo Empresarial -->
+      <div class="robot-card fade-up delay-2">
+        <img src="imagenes_alfa12/web_modelo_empresarial_logistico.png" alt="Modelo Empresarial Logístico ALFA 1.2" class="robot-card-img">
+        <div class="robot-card-body">
+          <div class="robot-card-type empresarial">● Modelo Empresarial Logístico</div>
+          <h3>Reparto de proximidad hasta portal exterior</h3>
+          <p>Robot de entrega autónoma supervisada para operadores logísticos, supermercados, restaurantes y comercios. Navega desde el punto de carga hasta el portal exterior del destinatario. No se contempla acceso al interior del edificio.</p>
+          <div class="robot-specs">
+            <div class="robot-spec">
+              <span class="robot-spec-key">Dimensiones</span>
+              <span class="robot-spec-val">80 × 150 × 90 cm</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Carga útil</span>
+              <span class="robot-spec-val">30 – 40 kg / compartimento</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Compartimentos</span>
+              <span class="robot-spec-val">2 independientes</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Modo de operación</span>
+              <span class="robot-spec-val">Autónoma supervisada</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Identificación</span>
+              <span class="robot-spec-val">PIN / QR / RFID</span>
+            </div>
+            <div class="robot-spec">
+              <span class="robot-spec-key">Control térmico</span>
+              <span class="robot-spec-val">Frío / Normal / Calor (conceptual)</span>
+            </div>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="badge badge-cyan">2 compartimentos</span>
+            <span class="badge badge-green">Logística urbana</span>
+            <span class="badge badge-cyan">QR / RFID</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Renders adicionales -->
+    <div class="model-renders-grid fade-up">
+      <div class="model-render-card">
+        <img src="imagenes_alfa12/mem_fig05a_modelo_empresarial_esquema.png" alt="Esquema modelo empresarial">
+        <div>Esquema empresarial</div>
+      </div>
+      <div class="model-render-card">
+        <img src="imagenes_alfa12/mem_fig05b_modelo_empresarial_render.png" alt="Render modelo empresarial">
+        <div>Render empresarial</div>
+      </div>
+      <div class="model-render-card">
+        <img src="imagenes_alfa12/mem_fig06a_modelo_personal_esquema.png" alt="Esquema modelo personal">
+        <div>Esquema personal</div>
+      </div>
+      <div class="model-render-card">
+        <img src="imagenes_alfa12/mem_fig06b_modelo_personal_render.png" alt="Render modelo personal">
+        <div>Render personal</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-bottom:32px;" class="fade-up">
+      <img src="imagenes_alfa12/mem_fig07_familia_de_robots.png" alt="Familia de robots ALFA 1.2 — visión conjunta" style="max-width:720px;width:100%;border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-md);background:var(--white);padding:8px;object-fit:contain;">
+      <p style="font-size:0.8rem;color:var(--gray-400);margin-top:10px;font-family:var(--font-mono);">Familia de robots ALFA 1.2 — arquitectura común, especializaciones distintas</p>
+    </div>
+
+    <!-- Tabla comparativa -->
+    <div class="compare-section fade-up">
+      <h3>Comparativa técnica de modelos</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Parámetro</th>
+              <th>Modelo Personal Asistencial</th>
+              <th>Modelo Empresarial Logístico</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Uso principal</td><td class="col-personal">Asistencia personal en recorridos domésticos</td><td class="col-empresarial">Reparto de pedidos hasta portal exterior</td></tr>
+            <tr><td>Usuario objetivo</td><td class="col-personal">Personas mayores, movilidad reducida</td><td class="col-empresarial">Operadores logísticos, comercios, restaurantes</td></tr>
+            <tr><td>Compartimentos</td><td class="col-personal">1 compartimento</td><td class="col-empresarial">2 compartimentos independientes</td></tr>
+            <tr><td>Dimensiones</td><td class="col-personal">50 × 80 × 90 cm</td><td class="col-empresarial">80 × 150 × 90 cm</td></tr>
+            <tr><td>Carga útil</td><td class="col-personal">20 – 30 kg</td><td class="col-empresarial">30 – 40 kg por compartimento</td></tr>
+            <tr><td>Modo de operación</td><td class="col-personal">Supervisión directa del usuario</td><td class="col-empresarial">Navegación autónoma supervisada</td></tr>
+            <tr><td>Entorno</td><td class="col-personal">Residencial, ascensores, portales</td><td class="col-empresarial">Vías urbanas, aceras, portal exterior</td></tr>
+            <tr><td>Interacción</td><td class="col-personal">HMI sencilla, pantalla táctil</td><td class="col-empresarial">PIN / QR / RFID</td></tr>
+            <tr><td>Control térmico</td><td class="col-personal">Conservación térmica conceptual</td><td class="col-empresarial">Frío / Normal / Calor (conceptual)</td></tr>
+            <tr><td>Nivel de autonomía</td><td class="col-personal">Acompañamiento, asistido</td><td class="col-empresarial">Semi-autónomo bajo supervisión remota</td></tr>
+            <tr><td>Maqueta</td><td class="col-personal" colspan="2" style="text-align:center;">Maqueta funcional escalada mediante impresión 3D — validación conceptual</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TECNOLOGÍA ═══ -->
+<section id="tecnologia">
+  <div class="container">
+    <div class="tech-header fade-up">
+      <div class="section-label" style="justify-content:center;color:var(--blue-300);">Arquitectura técnica</div>
+      <h2 style="color:var(--white);">Tecnología común, <span class="text-gradient">dos aplicaciones</span></h2>
+      <p>La arquitectura común evita desarrollar dos proyectos independientes y garantiza coherencia técnica entre ambos modelos. Los subsistemas de locomoción, sensórica, control e interfaz son compartidos y adaptados en función del modelo.</p>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-card fade-up delay-1">
+        <div class="tech-card-icon">🦾</div>
+        <h4>Tracción por orugas</h4>
+        <p>Plataforma móvil terrestre con tracción diferencial por orugas. Mayor estabilidad y capacidad de superar irregularidades del terreno urbano.</p>
+      </div>
+      <div class="tech-card fade-up delay-1">
+        <div class="tech-card-icon">📡</div>
+        <h4>Sensores LiDAR</h4>
+        <p>Detección de obstáculos a media-larga distancia. Generación de mapas conceptuales del entorno para planificación de rutas supervisadas.</p>
+      </div>
+      <div class="tech-card fade-up delay-2">
+        <div class="tech-card-icon">🔊</div>
+        <h4>Sensores ultrasónicos</h4>
+        <p>Detección de proximidad y obstáculos a corta distancia. Complementan al LiDAR en zonas de baja visibilidad o superficies irregulares.</p>
+      </div>
+      <div class="tech-card fade-up delay-2">
+        <div class="tech-card-icon">✋</div>
+        <h4>Sensores de contacto</h4>
+        <p>Detección táctil de colisiones y presencia de objetos. Primera capa de protección ante situaciones de contacto no previsto.</p>
+      </div>
+      <div class="tech-card fade-up delay-3">
+        <div class="tech-card-icon">🛰️</div>
+        <h4>GPS / GNSS</h4>
+        <p>Posicionamiento global para trazabilidad de rutas y seguimiento en operaciones de entrega supervisada del modelo empresarial.</p>
+      </div>
+      <div class="tech-card fade-up delay-3">
+        <div class="tech-card-icon">🖥️</div>
+        <h4>Unidad de control</h4>
+        <p>Módulo central de procesamiento: integración de sensores, ejecución de comportamientos, comunicación con HMI y supervisión de sistemas.</p>
+      </div>
+      <div class="tech-card fade-up delay-1">
+        <div class="tech-card-icon">📲</div>
+        <h4>HMI</h4>
+        <p>Interfaz hombre-máquina adaptada a cada modelo. Pantalla táctil con comandos simplificados para el modelo personal. Panel de identificación para el modelo empresarial.</p>
+      </div>
+      <div class="tech-card fade-up delay-2">
+        <div class="tech-card-icon">⬆️</div>
+        <h4>Bandeja elevable</h4>
+        <p>Actuador lineal eléctrico que eleva la bandeja de carga hasta una altura ergonómica. Elimina la necesidad de agacharse para recoger o depositar objetos.</p>
+      </div>
+      <div class="tech-card fade-up delay-3">
+        <div class="tech-card-icon">🧊</div>
+        <h4>Control térmico conceptual</h4>
+        <p>Propuesta de compartimentos con regulación de temperatura: modo frío, normal o calor. Orientado al modelo empresarial para productos sensibles a la temperatura.</p>
+      </div>
+      <div class="tech-card fade-up delay-1">
+        <div class="tech-card-icon">🔐</div>
+        <h4>Identificación segura</h4>
+        <p>Desbloqueo de compartimentos mediante PIN numérico, código QR o tarjeta RFID. Garantía de entrega al destinatario correcto con registro de acceso.</p>
+      </div>
+      <div class="tech-card fade-up delay-2">
+        <div class="tech-card-icon">🚨</div>
+        <h4>Parada de emergencia</h4>
+        <p>Sistema de parada inmediata activable manualmente o por detección de condiciones críticas. Requisito de diseño no negociable.</p>
+      </div>
+      <div class="tech-card fade-up delay-3">
+        <div class="tech-card-icon">💡</div>
+        <h4>Señalización luminosa</h4>
+        <p>Indicadores visuales de estado del robot (en operación, cargando, alerta, parada). Mejora la visibilidad e integración segura en el entorno.</p>
+      </div>
+    </div>
+    <div class="tech-images">
+      <div class="tech-img-wrap fade-up delay-1">
+        <img src="imagenes_alfa12/web_tecnologia_bandeja_elevable_abierta.png" alt="Bandeja elevable ALFA 1.2 — posición abierta con actuador lineal eléctrico">
+        <div class="tech-img-caption">
+          <h4>Bandeja elevable</h4>
+          <p>Actuador lineal eléctrico · Reducción del esfuerzo físico · Diseño ergonómico</p>
+        </div>
+      </div>
+      <div class="tech-img-wrap fade-up delay-2">
+        <img src="imagenes_alfa12/web_interaccion_usuario_bandeja_elevable.png" alt="Interacción del usuario con la bandeja elevable del robot ALFA 1.2">
+        <div class="tech-img-caption">
+          <h4>Interacción usuario-robot</h4>
+          <p>Interfaz accesible · Operación supervisada · Diseño centrado en el usuario</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ IMPACTO ═══ -->
+<section id="impacto">
+  <div class="container">
+    <div class="impacto-header fade-up">
+      <div class="section-label" style="justify-content:center;">Impacto del proyecto</div>
+      <h2>Valor técnico, social y <span class="text-gradient">urbano</span></h2>
+      <p style="color:var(--gray-500);max-width:600px;margin:0 auto;margin-top:14px;">El proyecto ALFA 1.2 no es solo una propuesta técnica. Responde a necesidades reales de accesibilidad, logística urbana y sostenibilidad, con un enfoque de ingeniería responsable.</p>
+    </div>
+    <div class="impacto-grid">
+      <div class="impacto-card social fade-up delay-1">
+        <div class="impacto-icon">❤️</div>
+        <h3>Impacto Social</h3>
+        <ul class="impacto-list">
+          <li>Apoyo a personas mayores en actividades cotidianas</li>
+          <li>Mayor autonomía e independencia personal</li>
+          <li>Reducción del esfuerzo físico repetitivo</li>
+          <li>Accesibilidad funcional real, no conceptual</li>
+          <li>Prevención de lesiones por manipulación de peso</li>
+          <li>Diseño inclusivo y centrado en la persona</li>
+        </ul>
+      </div>
+      <div class="impacto-card urbano fade-up delay-2">
+        <div class="impacto-icon">🌿</div>
+        <h3>Impacto Urbano</h3>
+        <ul class="impacto-list">
+          <li>Propulsión eléctrica, sin emisiones directas</li>
+          <li>Integración conceptual en entornos peatonales</li>
+          <li>Operación supervisada compatible con zonas urbanas</li>
+          <li>Posible circulación en vías autorizadas para robots</li>
+          <li>Complemento a la última milla de paquetería</li>
+          <li>Compatible con políticas de movilidad sostenible</li>
+        </ul>
+      </div>
+      <div class="impacto-card logistico fade-up delay-3">
+        <div class="impacto-icon">📦</div>
+        <h3>Impacto Logístico</h3>
+        <ul class="impacto-list">
+          <li>Entregas de proximidad autónomas supervisadas</li>
+          <li>Apoyo a comercios de barrio y restauración</li>
+          <li>Modularidad adaptable a distintas operaciones</li>
+          <li>Trazabilidad de entregas y estados</li>
+          <li>Reducción de tiempos de espera al destinatario</li>
+          <li>Escalable hacia gestión de pequeñas flotas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GESTIÓN ═══ -->
+<section id="gestion">
+  <div class="container">
+    <div class="gestion-header fade-up">
+      <div class="section-label" style="justify-content:center;color:var(--blue-300);">Project Management</div>
+      <h2 style="color:var(--white);">Un proyecto técnico gestionado con <span class="text-gradient">metodología profesional</span></h2>
+      <p>ALFA 1.2 no es solo un proyecto de robótica. Es también un ejercicio completo de planificación y gestión de proyectos siguiendo las áreas de conocimiento del PMI, con documentación técnica de nivel máster.</p>
+    </div>
+    <div class="gestion-pills fade-up">
+      <span class="gestion-pill">Project Charter</span>
+      <span class="gestion-pill">WBS / EDT</span>
+      <span class="gestion-pill">Diagrama AON</span>
+      <span class="gestion-pill">Gantt</span>
+      <span class="gestion-pill">Gestión de Costes</span>
+      <span class="gestion-pill">Curva S</span>
+      <span class="gestion-pill">Gestión de Compras</span>
+      <span class="gestion-pill">Calidad</span>
+      <span class="gestion-pill">Riesgos</span>
+      <span class="gestion-pill">Stakeholders</span>
+      <span class="gestion-pill">Comunicaciones</span>
+      <span class="gestion-pill">Metodología Agile</span>
+      <span class="gestion-pill">Hoja de Ruta</span>
+    </div>
+    <!-- Tabs gallery -->
+    <div class="fade-up">
+      <div class="gallery-tabs">
+        <button class="gallery-tab active" onclick="switchTab('planificacion', this)">Planificación</button>
+        <button class="gallery-tab" onclick="switchTab('costes', this)">Costes y Recursos</button>
+        <button class="gallery-tab" onclick="switchTab('stakeholders', this)">Stakeholders y Calidad</button>
+        <button class="gallery-tab" onclick="switchTab('madurez', this)">Madurez y Roadmap</button>
+      </div>
+      <div id="tab-planificacion" class="gallery-panel active">
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig04_metodologia_agile.png')">
+          <img src="imagenes_alfa12/mem_fig04_metodologia_agile.png" alt="Metodología Agile aplicada al proyecto">
+          <div class="gallery-img-label">Metodología Agile<span>Gestión iterativa</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig08_alcance.png')">
+          <img src="imagenes_alfa12/mem_fig08_alcance.png" alt="Alcance del proyecto ALFA 1.2">
+          <div class="gallery-img-label">Alcance del proyecto<span>Project scope</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig10_wbs_parte_1.png')">
+          <img src="imagenes_alfa12/mem_fig10_wbs_parte_1.png" alt="WBS Parte 1">
+          <div class="gallery-img-label">WBS / EDT — Parte 1<span>Estructura de desglose del trabajo</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig11_wbs_parte_2.png')">
+          <img src="imagenes_alfa12/mem_fig11_wbs_parte_2.png" alt="WBS Parte 2">
+          <div class="gallery-img-label">WBS / EDT — Parte 2<span>Desglose detallado</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig13_grafo_aon.png')">
+          <img src="imagenes_alfa12/mem_fig13_grafo_aon.png" alt="Diagrama AON — Grafo de precedencias">
+          <div class="gallery-img-label">Diagrama AON<span>Grafo de precedencias</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig14_diagrama_gantt.png')">
+          <img src="imagenes_alfa12/mem_fig14_diagrama_gantt.png" alt="Diagrama de Gantt del proyecto">
+          <div class="gallery-img-label">Diagrama de Gantt<span>Planificación temporal</span></div>
+        </div>
+      </div>
+      <div id="tab-costes" class="gallery-panel">
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig02_modelo_de_negocio.png')">
+          <img src="imagenes_alfa12/mem_fig02_modelo_de_negocio.png" alt="Modelo de negocio ALFA 1.2">
+          <div class="gallery-img-label">Modelo de negocio<span>Business model canvas</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig15a_presupuesto_por_fases.png')">
+          <img src="imagenes_alfa12/mem_fig15a_presupuesto_por_fases.png" alt="Presupuesto por fases">
+          <div class="gallery-img-label">Presupuesto por fases<span>Distribución de costes</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig15b_presupuesto_por_tipo_recurso.png')">
+          <img src="imagenes_alfa12/mem_fig15b_presupuesto_por_tipo_recurso.png" alt="Presupuesto por tipo de recurso">
+          <div class="gallery-img-label">Presupuesto por recurso<span>Tipología de recursos</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig16_curva_s.png')">
+          <img src="imagenes_alfa12/mem_fig16_curva_s.png" alt="Curva S del proyecto">
+          <div class="gallery-img-label">Curva S<span>Control de costes acumulados</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig17_flujo_de_costes.png')">
+          <img src="imagenes_alfa12/mem_fig17_flujo_de_costes.png" alt="Flujo de costes del proyecto">
+          <div class="gallery-img-label">Flujo de costes<span>Distribución temporal</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/extra_aon_projects_3_original.jpg')">
+          <img src="imagenes_alfa12/extra_aon_projects_3_original.jpg" alt="Análisis AON adicional">
+          <div class="gallery-img-label">Análisis AON adicional<span>Redes de precedencias</span></div>
+        </div>
+      </div>
+      <div id="tab-stakeholders" class="gallery-panel">
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig20_stakeholders.png')">
+          <img src="imagenes_alfa12/mem_fig20_stakeholders.png" alt="Mapa de stakeholders del proyecto">
+          <div class="gallery-img-label">Stakeholders<span>Análisis de interesados</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig18_secuencia_control_calidad.png')">
+          <img src="imagenes_alfa12/mem_fig18_secuencia_control_calidad.png" alt="Secuencia de control de calidad">
+          <div class="gallery-img-label">Control de calidad<span>Secuencia de verificación</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig19_ciclo_mejora_continua_calidad.png')">
+          <img src="imagenes_alfa12/mem_fig19_ciclo_mejora_continua_calidad.png" alt="Ciclo de mejora continua de calidad">
+          <div class="gallery-img-label">Mejora continua<span>Ciclo PDCA adaptado</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig21_sintesis_integracion_pmp.png')">
+          <img src="imagenes_alfa12/mem_fig21_sintesis_integracion_pmp.png" alt="Síntesis integración PMP">
+          <div class="gallery-img-label">Síntesis PMP<span>Integración de áreas</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig22_cumplimiento_areas_pmp.png')">
+          <img src="imagenes_alfa12/mem_fig22_cumplimiento_areas_pmp.png" alt="Cumplimiento áreas PMP">
+          <div class="gallery-img-label">Cumplimiento PMP<span>Cobertura de áreas de conocimiento</span></div>
+        </div>
+      </div>
+      <div id="tab-madurez" class="gallery-panel">
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig23_madurez_areas_gestion.png')">
+          <img src="imagenes_alfa12/mem_fig23_madurez_areas_gestion.png" alt="Madurez de áreas de gestión">
+          <div class="gallery-img-label">Madurez de gestión<span>Evaluación por área</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig24_hoja_ruta_futura.png')">
+          <img src="imagenes_alfa12/mem_fig24_hoja_ruta_futura.png" alt="Hoja de ruta futura del proyecto">
+          <div class="gallery-img-label">Hoja de ruta futura<span>Evolución del proyecto</span></div>
+        </div>
+        <div class="gallery-img-card" onclick="openLightbox('imagenes_alfa12/mem_fig03_organizacion_equipo.png')">
+          <img src="imagenes_alfa12/mem_fig03_organizacion_equipo.png" alt="Organización del equipo del proyecto">
+          <div class="gallery-img-label">Organización del equipo<span>Estructura y roles</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CASOS PILOTO ═══ -->
+<section id="casos">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px;" class="fade-up">
+      <div class="section-label" style="justify-content:center;">Validación conceptual</div>
+      <h2>Casos piloto <span class="text-gradient">conceptuales</span></h2>
+      <p style="color:var(--gray-500);max-width:580px;margin:16px auto 0;">Escenarios diseñados para validar la viabilidad conceptual del sistema en contextos urbanos reales. No representan despliegues comerciales ni contratos activos.</p>
+    </div>
+    <div class="casos-notice fade-up">
+      ⚠️ Casos conceptuales creados para validación académica. No representan contratos comerciales reales.
+    </div>
+    <div class="casos-grid">
+      <div class="caso-card fade-up delay-1">
+        <img src="imagenes_alfa12/web_caso_urbantrack_assist.png" alt="Caso piloto UrbanTrack Assist — asistencia robótica en compras domésticas" class="caso-card-img">
+        <div class="caso-card-body">
+          <div class="caso-tag">
+            <span class="badge badge-blue">Caso piloto conceptual</span>
+          </div>
+          <h3>UrbanTrack Assist</h3>
+          <p>Sistema de acompañamiento robótico para transportar compras domésticas desde comercios de proximidad hasta el domicilio, orientado a usuarios sénior o con movilidad reducida. Evalúa la viabilidad del modelo personal en trayectos de 200–800 m.</p>
+        </div>
+      </div>
+      <div class="caso-card fade-up delay-2">
+        <img src="imagenes_alfa12/web_caso_smartroute_logistics.png" alt="Caso piloto SmartRoute Logistics — rutas supervisadas para robots de reparto" class="caso-card-img">
+        <div class="caso-card-body">
+          <div class="caso-tag">
+            <span class="badge badge-cyan">Simulación conceptual</span>
+          </div>
+          <h3>SmartRoute Logistics</h3>
+          <p>Evaluación de rutas urbanas supervisadas para robots de reparto en zonas con carril bici, aceras anchas y puntos de entrega controlados. Analiza la compatibilidad del modelo empresarial con entornos de movilidad compartida.</p>
+        </div>
+      </div>
+      <div class="caso-card fade-up delay-3">
+        <img src="imagenes_alfa12/web_caso_robofleet_control.png" alt="Caso piloto RoboFleet Control — supervisión de flotas urbanas de robots" class="caso-card-img">
+        <div class="caso-card-body">
+          <div class="caso-tag">
+            <span class="badge badge-green">Arquitectura demostrativa</span>
+          </div>
+          <h3>RoboFleet Control</h3>
+          <p>Propuesta de supervisión de pequeñas flotas urbanas, con monitorización de estados, rutas, incidencias, disponibilidad y retorno a base. Arquitectura conceptual para la gestión coordinada de múltiples unidades del modelo empresarial.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIOS ═══ -->
+<section id="testimonios">
+  <div class="container">
+    <div class="testimonios-header fade-up">
+      <div class="section-label" style="justify-content:center;">Feedback de validación</div>
+      <h2>Opiniones sobre el <span class="text-gradient">concepto del proyecto</span></h2>
+      <p style="color:var(--gray-500);max-width:560px;margin:14px auto 0;">Valoraciones recogidas en el proceso de validación conceptual del proyecto. Perfiles consultados durante la fase de análisis de requisitos.</p>
+    </div>
+    <div class="testimonios-grid">
+      <div class="testimonio-card fade-up delay-1">
+        <p class="testimonio-text">El valor del concepto no está solo en transportar pedidos, sino en reducir el esfuerzo físico del usuario durante la última fase de manipulación de la carga. Eso es lo que más necesitan las personas mayores que atendemos.</p>
+        <div class="testimonio-author">
+          <div class="testimonio-avatar">MS</div>
+          <div>
+            <div class="testimonio-name">Marta Soler</div>
+            <div class="testimonio-role">Responsable de innovación urbana · Validación conceptual</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonio-card fade-up delay-2">
+        <p class="testimonio-text">La arquitectura común entre ambos modelos es una decisión técnica acertada. Desde el punto de vista de automatización industrial, la coherencia de plataforma facilita el mantenimiento y la escalabilidad futura del sistema.</p>
+        <div class="testimonio-author">
+          <div class="testimonio-avatar">CM</div>
+          <div>
+            <div class="testimonio-name">Carlos Medina</div>
+            <div class="testimonio-role">Consultor de automatización · Revisión técnica externa</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonio-card fade-up delay-1">
+        <p class="testimonio-text">Participé en la evaluación del escenario UrbanTrack Assist. La propuesta de bandeja elevable es práctica y bien pensada: elimina uno de los gestos más frecuentes de riesgo de caída. El concepto está bien fundamentado.</p>
+        <div class="testimonio-author">
+          <div class="testimonio-avatar">ER</div>
+          <div>
+            <div class="testimonio-name">Elena Roca</div>
+            <div class="testimonio-role">Participante en validación conceptual · Perfil usuario sénior</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonio-card fade-up delay-2">
+        <p class="testimonio-text">La calidad del Project Management Plan es notable. La cobertura de las áreas de conocimiento del PMI, la planificación con AON y Gantt, y la gestión de riesgos y stakeholders demuestran una visión integral del proyecto que va más allá del diseño técnico.</p>
+        <div class="testimonio-author">
+          <div class="testimonio-avatar">DF</div>
+          <div>
+            <div class="testimonio-name">Daniel Ferrer</div>
+            <div class="testimonio-role">Coordinador académico · Evaluación de proyectos tecnológicos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ EQUIPO ═══ -->
+<section id="equipo">
+  <div class="container">
+    <div class="equipo-header fade-up">
+      <div class="section-label" style="justify-content:center;">El equipo</div>
+      <h2>Cuatro ingenieros, <span class="text-gradient">un proyecto integrado</span></h2>
+      <p style="color:var(--gray-500);max-width:580px;margin:14px auto 0;">Equipo multidisciplinar de ingeniería formado para el desarrollo conceptual, planificación y gestión técnica del proyecto ALFA 1.2 en el marco de un Project Management Plan de nivel máster.</p>
+    </div>
+    <div class="equipo-grid">
+      <div class="equipo-card fade-up delay-1">
+        <img src="imagenes_alfa12/mem_equipo_jose_alcalde.png" alt="Jose Miguel Alcalde Cava — Project Manager e Ingeniero de Sistemas ALFA 1.2" class="equipo-img">
+        <div class="equipo-card-body">
+          <h4>Jose Miguel Alcalde Cava</h4>
+          <div class="equipo-card-role">Project Manager · Ing. Sistemas</div>
+          <p>Coordinación global del proyecto, planificación, seguimiento, integración documental y control de alcance, costes y riesgos.</p>
+        </div>
+      </div>
+      <div class="equipo-card fade-up delay-2">
+        <img src="imagenes_alfa12/mem_equipo_adria_hernandez.png" alt="Adrià Hernández González — Ingeniero de Robótica y Movilidad Autónoma ALFA 1.2" class="equipo-img">
+        <div class="equipo-card-body">
+          <h4>Adrià Hernández González</h4>
+          <div class="equipo-card-role">Ing. Robótica · Movilidad Autónoma</div>
+          <p>Diseño conceptual de la arquitectura robótica, movilidad autónoma, locomoción y estrategias de navegación urbana.</p>
+        </div>
+      </div>
+      <div class="equipo-card fade-up delay-3">
+        <img src="imagenes_alfa12/mem_equipo_richard_sosa.png" alt="Richard Josué Sosa de Jesús — Ingeniero de Electrónica y Control ALFA 1.2" class="equipo-img">
+        <div class="equipo-card-body">
+          <h4>Richard Josué Sosa de Jesús</h4>
+          <div class="equipo-card-role">Ing. Electrónica · Control</div>
+          <p>Arquitectura electrónica, sensórica, control, adquisición de datos y seguridad de integración entre sensores y actuadores.</p>
+        </div>
+      </div>
+      <div class="equipo-card fade-up delay-4">
+        <img src="imagenes_alfa12/mem_equipo_diego_ruiz.png" alt="Diego Antonio Ruiz Ortega — Ingeniero de Integración de Sistemas y Comunicaciones ALFA 1.2" class="equipo-img">
+        <div class="equipo-card-body">
+          <h4>Diego Antonio Ruiz Ortega</h4>
+          <div class="equipo-card-role">Ing. Integración · Comunicaciones</div>
+          <p>Integración de subsistemas, comunicaciones, interoperabilidad, supervisión y coordinación funcional del sistema.</p>
+        </div>
+      </div>
+    </div>
+    <div class="equipo-org fade-up">
+      <h3 style="margin-bottom:20px;text-align:center;">Organización del equipo</h3>
+      <div style="text-align:center;">
+        <img src="imagenes_alfa12/mem_fig03_organizacion_equipo.png" alt="Organigrama y estructura del equipo ALFA 1.2" style="max-width:800px;width:100%;border-radius:var(--radius-md);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ROADMAP ═══ -->
+<section id="roadmap">
+  <div class="container">
+    <div class="roadmap-header fade-up">
+      <div class="section-label" style="justify-content:center;color:var(--blue-300);">Planificación</div>
+      <h2 style="color:var(--white);">Fases del proyecto</h2>
+      <p>Estructura de trabajo secuencial y planificada, desarrollada con herramientas de gestión de proyectos: WBS, AON, Gantt y curva S.</p>
+    </div>
+    <div class="roadmap-timeline fade-up">
+      <div class="roadmap-item">
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 1</div>
+          <h4>Definición del alcance y requisitos</h4>
+        </div>
+        <div class="roadmap-dot">1</div>
+        <div class="roadmap-empty"></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-empty"></div>
+        <div class="roadmap-dot">2</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 2</div>
+          <h4>Arquitectura común de la familia de robots</h4>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 3</div>
+          <h4>Diseño conceptual del modelo personal asistencial</h4>
+        </div>
+        <div class="roadmap-dot">3</div>
+        <div class="roadmap-empty"></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-empty"></div>
+        <div class="roadmap-dot">4</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 4</div>
+          <h4>Diseño conceptual del modelo empresarial logístico</h4>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 5</div>
+          <h4>Seguridad, normativa e interacción usuario-robot</h4>
+        </div>
+        <div class="roadmap-dot">5</div>
+        <div class="roadmap-empty"></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-empty"></div>
+        <div class="roadmap-dot">6</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 6</div>
+          <h4>Recursos, costes, compras y gestión de riesgos</h4>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 7</div>
+          <h4>Maqueta funcional escalada y planos técnicos</h4>
+        </div>
+        <div class="roadmap-dot">7</div>
+        <div class="roadmap-empty"></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-empty"></div>
+        <div class="roadmap-dot">8</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 8</div>
+          <h4>Evaluación conceptual y sostenibilidad</h4>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 9</div>
+          <h4>Documentación final y presentación del proyecto</h4>
+        </div>
+        <div class="roadmap-dot">9</div>
+        <div class="roadmap-empty"></div>
+      </div>
+    </div>
+    <div class="roadmap-img-support fade-up" style="margin-top:48px;">
+      <p style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-bottom:12px;font-family:var(--font-mono);letter-spacing:0.05em;">HOJA DE RUTA FUTURA — Evolución post-proyecto</p>
+      <img src="imagenes_alfa12/mem_fig24_hoja_ruta_futura.png" alt="Hoja de ruta futura del proyecto ALFA 1.2" style="max-width:900px;cursor:pointer;background:var(--white);padding:10px;object-fit:contain;" onclick="openLightbox('imagenes_alfa12/mem_fig24_hoja_ruta_futura.png')">
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GALERÍA ═══ -->
+<section id="galeria">
+  <div class="container">
+    <div class="galeria-header fade-up">
+      <div class="section-label" style="justify-content:center;">Documentación visual</div>
+      <h2>Memoria técnica del proyecto</h2>
+      <p style="color:var(--gray-500);max-width:560px;margin:14px auto 0;">Selección de figuras y diagramas incluidos en la documentación técnica. Haz clic en cualquier imagen para ampliarla.</p>
+    </div>
+    <div class="galeria-grid fade-up">
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/mem_fig10_wbs_parte_1.png')">
+        <img src="imagenes_alfa12/mem_fig10_wbs_parte_1.png" alt="WBS parte 1">
+        <div class="galeria-item-label">WBS / EDT<span>Parte 1</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/mem_fig11_wbs_parte_2.png')">
+        <img src="imagenes_alfa12/mem_fig11_wbs_parte_2.png" alt="WBS parte 2">
+        <div class="galeria-item-label">WBS / EDT<span>Parte 2</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/mem_fig12_wbs_parte_3.png')">
+        <img src="imagenes_alfa12/mem_fig12_wbs_parte_3.png" alt="WBS parte 3">
+        <div class="galeria-item-label">WBS / EDT<span>Parte 3</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/mem_fig13_grafo_aon.png')">
+        <img src="imagenes_alfa12/mem_fig13_grafo_aon.png" alt="Grafo AON">
+        <div class="galeria-item-label">Grafo AON<span>Red de precedencias</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/mem_fig14_diagrama_gantt.png')">
+        <img src="imagenes_alfa12/mem_fig14_diagrama_gantt.png" alt="Diagrama de Gantt">
+        <div class="galeria-item-label">Diagrama Gantt<span>Planificación temporal</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/mem_fig16_curva_s.png')">
+        <img src="imagenes_alfa12/mem_fig16_curva_s.png" alt="Curva S">
+        <div class="galeria-item-label">Curva S<span>Control de costes</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/mem_fig20_stakeholders.png')">
+        <img src="imagenes_alfa12/mem_fig20_stakeholders.png" alt="Mapa de stakeholders">
+        <div class="galeria-item-label">Stakeholders<span>Análisis de interesados</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/mem_fig23_madurez_areas_gestion.png')">
+        <img src="imagenes_alfa12/mem_fig23_madurez_areas_gestion.png" alt="Madurez áreas gestión">
+        <div class="galeria-item-label">Madurez de gestión<span>Evaluación por áreas</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/boceto_original_pagina_01.png')">
+        <img src="imagenes_alfa12/boceto_original_pagina_01.png" alt="Boceto original página 1">
+        <div class="galeria-item-label">Bocetos originales<span>Página 01</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/boceto_original_pagina_02.png')">
+        <img src="imagenes_alfa12/boceto_original_pagina_02.png" alt="Boceto original página 2">
+        <div class="galeria-item-label">Bocetos originales<span>Página 02</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/boceto_original_pagina_03.png')">
+        <img src="imagenes_alfa12/boceto_original_pagina_03.png" alt="Boceto original página 3">
+        <div class="galeria-item-label">Bocetos originales<span>Página 03</span></div>
+      </div>
+      <div class="galeria-item" onclick="openLightbox('imagenes_alfa12/boceto_original_pagina_04.png')">
+        <img src="imagenes_alfa12/boceto_original_pagina_04.png" alt="Boceto original página 4">
+        <div class="galeria-item-label">Bocetos originales<span>Página 04</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACTO ═══ -->
+<section id="contacto">
+  <div class="container">
+    <div class="contacto-inner">
+      <div class="contacto-info fade-up">
+        <div class="section-label" style="color:var(--blue-300);">Contacto</div>
+        <h2>¿Tienes preguntas sobre el proyecto?</h2>
+        <p>Este formulario es parte de la presentación web del proyecto académico ALFA 1.2. No envía datos reales. Para información sobre el proyecto, puedes contactar con el equipo a través de los datos de referencia.</p>
+        <div class="contacto-details">
+          <div class="contacto-detail">
+            <div class="contacto-detail-icon">🏢</div>
+            <div class="contacto-detail-text">
+              <strong>ALFA 1.2 Robotics</strong>
+              Barcelona / Terrassa, España
+            </div>
+          </div>
+          <div class="contacto-detail">
+            <div class="contacto-detail-icon">✉️</div>
+            <div class="contacto-detail-text">
+              <strong>Email de referencia</strong>
+              contacto@alfa12robotics.com
+            </div>
+          </div>
+          <div class="contacto-detail">
+            <div class="contacto-detail-icon">🌐</div>
+            <div class="contacto-detail-text">
+              <strong>Web de referencia</strong>
+              www.alfa12robotics.com
+            </div>
+          </div>
+          <div class="contacto-detail">
+            <div class="contacto-detail-icon">📋</div>
+            <div class="contacto-detail-text">
+              <strong>Tipo de proyecto</strong>
+              Proyecto académico de ingeniería · Project Management Plan
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contacto-form fade-up delay-2">
+        <h3 style="color:var(--white);margin-bottom:24px;">Solicitar información</h3>
+        <div class="form-group">
+          <label for="nombre">Nombre completo</label>
+          <input type="text" id="nombre" class="form-control" placeholder="Tu nombre" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" class="form-control" placeholder="tu@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="organizacion">Organización</label>
+          <input type="text" id="organizacion" class="form-control" placeholder="Tu empresa o institución">
+        </div>
+        <div class="form-group">
+          <label for="mensaje">Mensaje</label>
+          <textarea id="mensaje" class="form-control" rows="4" placeholder="¿En qué podemos ayudarte?"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="handleFormSubmit()" style="width:100%;justify-content:center;">Solicitar información →</button>
+        <div class="form-message" id="form-message">
+          ✓ Gracias por contactar con ALFA 1.2. Esta demo web no envía datos reales. El mensaje no ha sido transmitido a ningún servidor.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">
+          <img src="imagenes_alfa12/mem_fig01_logo_alfa12_recortado_transparente.png" alt="Logo ALFA 1.2" class="footer-logo">
+          <span class="footer-brand-name">ALFA 1.2</span>
+        </div>
+        <p class="footer-desc">Proyecto conceptual de robótica de última milla para entornos urbanos. Diseño, planificación y gestión de una familia de robots terrestres orientados a la accesibilidad, la asistencia personal y la logística de proximidad.</p>
+        <p class="footer-disclaimer">⚠ Proyecto académico de ingeniería desarrollado en el marco de un Project Management Plan. Las imágenes y casos piloto tienen finalidad conceptual y demostrativa.</p>
+      </div>
+      <div class="footer-nav">
+        <h5>Navegación</h5>
+        <a href="#hero">Inicio</a>
+        <a href="#problema">El problema</a>
+        <a href="#solucion">La solución</a>
+        <a href="#robots">Modelos de robot</a>
+        <a href="#tecnologia">Tecnología</a>
+        <a href="#impacto">Impacto</a>
+      </div>
+      <div class="footer-nav">
+        <h5>Proyecto</h5>
+        <a href="#gestion">Gestión del proyecto</a>
+        <a href="#casos">Casos piloto</a>
+        <a href="#equipo">Equipo</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#galeria">Documentación</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-bottom-text">© 2026 ALFA 1.2 Robotics · Barcelona / Terrassa, España · Proyecto académico de ingeniería</span>
+      <span class="footer-bottom-text" style="font-family:var(--font-mono);font-size:0.7rem;">v1.2.0 · Presentación conceptual</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ LIGHTBOX ═══ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Imagen ampliada" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Cerrar imagen">✕</button>
+  <img src="" alt="Imagen ampliada" class="lightbox-img" id="lightbox-img">
+</div>
+
+<!-- ═══ JAVASCRIPT ═══ -->
+<script>
+// ─── NAVBAR SCROLL ───
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+}, { passive: true });
+
+// ─── HAMBURGER MENU ───
+const hamburger = document.getElementById('hamburger');
+const navMobile = document.getElementById('nav-mobile');
+hamburger.addEventListener('click', () => {
+  const isOpen = navMobile.classList.toggle('open');
+  hamburger.classList.toggle('open', isOpen);
+  hamburger.setAttribute('aria-expanded', isOpen);
+});
+function closeMenu() {
+  navMobile.classList.remove('open');
+  hamburger.classList.remove('open');
+  hamburger.setAttribute('aria-expanded', 'false');
+}
+
+// ─── SCROLL ANIMATIONS ───
+const fadeEls = document.querySelectorAll('.fade-up');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+fadeEls.forEach(el => observer.observe(el));
+
+// ─── GALLERY TABS ───
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.gallery-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.gallery-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── LIGHTBOX ───
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  img.src = src;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (!e || e.target !== document.getElementById('lightbox-img')) {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+// ─── FORM SUBMIT ───
+function handleFormSubmit() {
+  const nombre = document.getElementById('nombre').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const msg = document.getElementById('form-message');
+  if (!nombre || !email) {
+    alert('Por favor, completa al menos tu nombre y correo electrónico.');
+    return;
+  }
+  msg.style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('nombre').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('organizacion').value = '';
+    document.getElementById('mensaje').value = '';
+  }, 300);
+}
+
+// ─── SMOOTH ACTIVE NAV ───
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--white)' : '';
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
